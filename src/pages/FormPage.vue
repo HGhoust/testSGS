@@ -34,14 +34,14 @@
         <AppInput
           class="flex-1"
           v-model="dataStore.$state.shift"
-          :options="shifts"
+          :options="filteredShifts"
           placeholder="Введите смену"
           input-type="text"
         />
         <AppInput
           class="flex-1"
           v-model="dataStore.$state.team"
-          :options="teams"
+          :options="filteredTeams"
           placeholder="Введите бригаду"
           input-type="text"
         />
@@ -91,10 +91,20 @@ const shifts = computed(() => [
   ),
 ])
 
+const filteredShifts = computed(() =>
+  shifts.value.filter((shift) =>
+    shift.toLowerCase().includes(dataStore.$state.shift.toLowerCase()),
+  ),
+)
+
 const teams = computed(() =>
   citiesData?.flatMap((city) =>
     city.workShops?.flatMap((workshop) => workshop.teams?.map((team) => team.teamName)),
   ),
+)
+
+const filteredTeams = computed(() =>
+  teams.value.filter((team) => team.toLowerCase().includes(dataStore.$state.team.toLowerCase())),
 )
 
 const isFilled = computed(() => {

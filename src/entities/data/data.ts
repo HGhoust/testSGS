@@ -13,7 +13,7 @@ type Workshop = {
   teams: Team[]
 }
 
-type City = {
+export type City = {
   cityName: string
   workShops: Workshop[]
 }

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, toRefs } from 'vue'
-import { cities } from '../data/data'
+import { cities, type City } from '../data/data'
 
 interface IData {
   city: string
@@ -16,7 +16,7 @@ interface IState {
   employee: string
   team: string
   shift: string
-  resultData: IData | undefined
+  resultData: IData | null
 }
 
 export const useDataStore = defineStore('data', () => {
@@ -26,18 +26,20 @@ export const useDataStore = defineStore('data', () => {
     employee: '',
     team: '',
     shift: '',
-    resultData: undefined,
+    resultData: null,
   })
 
-  const filteredData = computed(() => {
+  const filteredData = computed((): City[] => {
+    const searchValue = (value: string): string => value?.toLowerCase().trim()
+
     return cities.filter((city) => {
       const coincidencesCity =
-        !state.city || city.cityName.toLowerCase().includes(state.city.toLowerCase())
+        !state.city || searchValue(city.cityName).includes(searchValue(state.city))
 
       const coincidencesWorkshop =
         !state.workshop ||
         city.workShops.some((workshop) =>
-          workshop.workshopName.toLowerCase().includes(state.workshop.toLowerCase()),
+          searchValue(workshop.workshopName).includes(searchValue(state.workshop)),
         )
 
       const coincidencesEmployee =
@@ -45,7 +47,7 @@ export const useDataStore = defineStore('data', () => {
         city.workShops.some((workshop) =>
           workshop.teams.some((team) =>
             team.employees.some((employee) =>
-              employee.employeeName.toLowerCase().includes(state.employee.toLowerCase()),
+              searchValue(employee.employeeName).includes(searchValue(state.employee)),
             ),
           ),
         )
